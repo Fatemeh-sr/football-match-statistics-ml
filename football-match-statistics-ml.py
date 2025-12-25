@@ -1,30 +1,52 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, KFold
-from sklearn.metrics import accuracy_score, confusion_matrix
+from sklearn import metrics
 import matplotlib.pyplot as plt
 
 
 def main():
-    # 1. Read Dataset
     df = pd.read_csv("epl_final.csv")
 
-    # 2. Select Features
-    X = df[
-        [
-            "FullTimeHomeGoals",
-            "FullTimeAwayGoals",
-            "HomeShots",
-            "AwayShots",
-            "HomeShotsOnTarget",
-            "AwayShotsOnTarget",
-        ]
+    features = [
+        "HalfTimeHomeGoals",
+        "HalfTimeAwayGoals",
+        "HomeShots",
+        "AwayShots",
+        "HomeShotsOnTarget",
+        "AwayShotsOnTarget",
+        "HomeCorners",
+        "AwayCorners",
+        "HomeFouls",
+        "AwayFouls",
+        "HomeRedCards",
+        "AwayRedCards",
     ]
 
-    y = df["FullTimeResult"].map({"H": 3, "D": 1, "A": 0})
+    X = df[features]
+    target = df["FullTimeResult"].map({"H": 3, "D": 1, "A": 0})
+    y = target
 
-    # 4. Random Forest with K-Fold Cross Validation
-    rf_cv = RandomForestClassifier(n_estimators=100, random_state=42)
+    # ----- Random Forest Classification without Cross Validation (Train/Test split)-----
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, train_size=0.8, random_state=42
+    )
+
+    classifier_rf = RandomForestClassifier(
+        n_estimators=300, max_depth=7, random_state=42
+    )
+    classifier_rf.fit(X_train, y_train)
+    y_pred = classifier_rf.predict(X_test)
+
+    acc_no_cv = metrics.accuracy_score(y_test, y_pred)
+
+    classification_rep = metrics.classification_report(y_test, y_pred)
+
+    print(f"Accuracy (without CV) : {acc_no_cv}")
+    print("\nClassification Report :\n", classification_rep)
+
+    # ----- Random Forest Classification with K-Fold Cross Validation ------
+    rf_cv = RandomForestClassifier(n_estimators=300, max_depth=7, random_state=42)
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
     cv_scores = []
@@ -34,41 +56,24 @@ def main():
 
         rf_cv.fit(X_train, y_train)
         y_pred = rf_cv.predict(X_test)
-        acc = accuracy_score(y_test, y_pred)
+        acc = metrics.accuracy_score(y_test, y_pred)
         cv_scores.append(acc)
 
+    mean_accuracy = sum(cv_scores) / len(cv_scores)
     print("=== Random Forest with K-Fold CV ===")
     print("Accuracy per fold:", cv_scores)
-    print("Mean Accuracy:", sum(cv_scores) / len(cv_scores))
-
-    # 5. Random Forest without Cross Validation (Train/Test split)
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf.fit(X_train, y_train)
-    y_pred = rf.predict(X_test)
-
-    acc_no_cv = accuracy_score(y_test, y_pred)
-    cm_no_cv = confusion_matrix(y_test, y_pred)
-
-    print("\n=== Random Forest without CV ===")
-    print("Accuracy:", acc_no_cv)
-    print("Confusion Matrix:\n", cm_no_cv)
+    print("Mean Accuracy:", mean_accuracy)
+    classification_rep = metrics.classification_report(y_test, y_pred)
+    print("\nClassification Report:\n", classification_rep)
 
     # 6. Feature Importance
-    importances = rf.feature_importances_
+    importances = classifier_rf.feature_importances_
     feature_names = X.columns
     plt.figure(figsize=(8, 5))
     plt.barh(feature_names, importances)
     plt.xlabel("Importance")
     plt.ylabel("Feature")
     plt.title("Feature Importance in Random Forest")
-    plt.show()
-
-    y = [acc_no_cv, sum(cv_scores) / len(cv_scores)]
-    x = [0.5, 1]
-    plt.bar(x, y)
     plt.show()
 
 
