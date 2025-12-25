@@ -24,8 +24,7 @@ def main():
     ]
 
     X = df[features]
-    target = df["FullTimeResult"].map({"H": 3, "D": 1, "A": 0})
-    y = target
+    y = df["FullTimeResult"]  # target
 
     # ----- Random Forest Classification without Cross Validation -----
     X_train, X_test, y_train, y_test = train_test_split(
@@ -42,10 +41,11 @@ def main():
 
     classification_rep = metrics.classification_report(y_test, y_pred)
 
-    print(f"Accuracy (without CV) : {acc_no_cv}")
+    print(f"\nAccuracy (without CV) :\n {acc_no_cv}")
     print("\nClassification Report :\n", classification_rep)
 
     # ----- Random Forest Classification with K-Fold Cross Validation ------
+    print(" --- Random Forest with K-Fold CV ---")
     rf_cv = RandomForestClassifier(n_estimators=300, max_depth=7, random_state=42)
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
@@ -58,16 +58,15 @@ def main():
         y_pred = rf_cv.predict(X_test)
         acc = metrics.accuracy_score(y_test, y_pred)
         cv_scores.append(acc)
+        print(
+            "\nClassification Report:\n", metrics.classification_report(y_test, y_pred)
+        )
 
-    classification_rep = metrics.classification_report(y_test, y_pred)
     mean_accuracy = sum(cv_scores) / len(cv_scores)
 
-    print(" --- Random Forest with K-Fold CV ---")
     print("\nAccuracy per fold :\n", cv_scores)
-    print("\nMean Accuracy :\n", mean_accuracy)
-    print("\nClassification Report:\n", classification_rep)
+    print("\nMean Accuracy : \n", mean_accuracy)
 
-    # 6. Feature Importance
     importances = classifier_rf.feature_importances_
     feature_names = X.columns
     plt.figure(figsize=(8, 5))
