@@ -2,13 +2,13 @@
 Random Forest Classification with and without K-Fold Cross Validation
 
 Project Description
-This project predicts the full-time match outcome of English Premier League (EPL) games using a Random Forest Classification model.
+- This project predicts the full-time match outcome of English Premier League (EPL) games using a Random Forest Classification model.
 The prediction is performed from the home team’s perspective based on statistical match data.
 
 ---
 
 Objective
-The goal of this project is to predict whether the home team wins, draws, or loses using match statistics and to compare model performance with and without cross-validation.
+- The goal of this project is to predict whether the home team wins, draws, or loses using match statistics and to compare model performance with and without cross-validation.
 
 ---
 
@@ -69,7 +69,7 @@ Classification reports are generated for both:
 ---
 
 Feature Importance
-Feature importance is extracted from the trained Random Forest model to analyze which match statistics contribute most to the prediction of match outcomes.
+- Feature importance is extracted from the trained Random Forest model to analyze which match statistics contribute most to the prediction of match outcomes.
 
 ---
 
