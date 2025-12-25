@@ -27,7 +27,7 @@ def main():
     target = df["FullTimeResult"].map({"H": 3, "D": 1, "A": 0})
     y = target
 
-    # ----- Random Forest Classification without Cross Validation (Train/Test split)-----
+    # ----- Random Forest Classification without Cross Validation -----
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, train_size=0.8, random_state=42
     )
@@ -59,11 +59,12 @@ def main():
         acc = metrics.accuracy_score(y_test, y_pred)
         cv_scores.append(acc)
 
-    mean_accuracy = sum(cv_scores) / len(cv_scores)
-    print("=== Random Forest with K-Fold CV ===")
-    print("Accuracy per fold:", cv_scores)
-    print("Mean Accuracy:", mean_accuracy)
     classification_rep = metrics.classification_report(y_test, y_pred)
+    mean_accuracy = sum(cv_scores) / len(cv_scores)
+
+    print(" --- Random Forest with K-Fold CV ---")
+    print("\nAccuracy per fold :\n", cv_scores)
+    print("\nMean Accuracy :\n", mean_accuracy)
     print("\nClassification Report:\n", classification_rep)
 
     # 6. Feature Importance
