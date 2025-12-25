@@ -26,7 +26,7 @@ def main():
     X = df[features]
     y = df["FullTimeResult"]  # target
 
-    # ----- Random Forest Classification without Cross Validation -----
+    # ----- Random Forest Classifier without Cross Validation -----
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, train_size=0.8, random_state=42
     )
@@ -44,8 +44,8 @@ def main():
     print(f"\nAccuracy (without CV) :\n {acc_no_cv}")
     print("\nClassification Report :\n", classification_rep)
 
-    # ----- Random Forest Classification with K-Fold Cross Validation ------
-    print(" --- Random Forest with K-Fold CV ---")
+    # ----- Random Forest Classifier with K-Fold Cross Validation ------
+    print(" --- Random Forest with K-Fold Cross Validation ---")
     rf_cv = RandomForestClassifier(n_estimators=300, max_depth=7, random_state=42)
     kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
