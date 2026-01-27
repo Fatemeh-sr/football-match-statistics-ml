@@ -5,6 +5,14 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 
 
+def Random_Forest_Without_CV()
+    {
+
+}
+def Random_Forest_With_CV()
+    {
+
+}
 def main():
     df = pd.read_csv("epl_final.csv")
 
@@ -69,7 +77,7 @@ def main():
 
     importances = classifier_rf.feature_importances_
     feature_names = X.columns
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(10, 10))
     plt.barh(feature_names, importances)
     plt.xlabel("Importance")
     plt.ylabel("Feature")
