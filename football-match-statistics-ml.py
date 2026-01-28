@@ -5,14 +5,49 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 
 
-def Random_Forest_Without_CV()
-    {
+def Random_Forest_Without_CV(X_train, X_test, y_train, y_test):
 
-}
-def Random_Forest_With_CV()
-    {
+    classifier_rf = RandomForestClassifier(
+        n_estimators=300, max_depth=7, random_state=42
+    )
+    classifier_rf.fit(X_train, y_train)
+    y_pred = classifier_rf.predict(X_test)
 
-}
+    acc_no_cv = metrics.accuracy_score(y_test, y_pred)
+
+    classification_rep = metrics.classification_report(y_test, y_pred)
+
+    print(f"\nAccuracy (without CV) :\n {acc_no_cv}")
+    print("\nClassification Report :\n", classification_rep)
+    return y_pred
+
+
+def Random_Forest_With_CV(X, y):
+
+    print(" --- Random Forest with K-Fold Cross Validation ---")
+    rf_cv = RandomForestClassifier(n_estimators=300, max_depth=7, random_state=42)
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+
+    cv_scores = []
+    for train_index, test_index in kf.split(X, y):
+        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
+        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
+
+        rf_cv.fit(X_train, y_train)
+        y_pred = rf_cv.predict(X_test)
+        acc = metrics.accuracy_score(y_test, y_pred)
+        cv_scores.append(acc)
+        print(
+            "\nClassification Report:\n", metrics.classification_report(y_test, y_pred)
+        )
+
+    mean_accuracy = sum(cv_scores) / len(cv_scores)
+
+    print("\nAccuracy per fold :\n", cv_scores)
+    print("\nMean Accuracy : \n", mean_accuracy)
+    return y_pred
+
+
 def main():
     df = pd.read_csv("epl_final.csv")
 
@@ -39,41 +74,7 @@ def main():
         X, y, train_size=0.8, random_state=42
     )
 
-    classifier_rf = RandomForestClassifier(
-        n_estimators=300, max_depth=7, random_state=42
-    )
-    classifier_rf.fit(X_train, y_train)
-    y_pred = classifier_rf.predict(X_test)
-
-    acc_no_cv = metrics.accuracy_score(y_test, y_pred)
-
-    classification_rep = metrics.classification_report(y_test, y_pred)
-
-    print(f"\nAccuracy (without CV) :\n {acc_no_cv}")
-    print("\nClassification Report :\n", classification_rep)
-
     # ----- Random Forest Classifier with K-Fold Cross Validation ------
-    print(" --- Random Forest with K-Fold Cross Validation ---")
-    rf_cv = RandomForestClassifier(n_estimators=300, max_depth=7, random_state=42)
-    kf = KFold(n_splits=5, shuffle=True, random_state=42)
-
-    cv_scores = []
-    for train_index, test_index in kf.split(X):
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y.iloc[train_index], y.iloc[test_index]
-
-        rf_cv.fit(X_train, y_train)
-        y_pred = rf_cv.predict(X_test)
-        acc = metrics.accuracy_score(y_test, y_pred)
-        cv_scores.append(acc)
-        print(
-            "\nClassification Report:\n", metrics.classification_report(y_test, y_pred)
-        )
-
-    mean_accuracy = sum(cv_scores) / len(cv_scores)
-
-    print("\nAccuracy per fold :\n", cv_scores)
-    print("\nMean Accuracy : \n", mean_accuracy)
 
     importances = classifier_rf.feature_importances_
     feature_names = X.columns
