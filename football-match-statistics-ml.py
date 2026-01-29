@@ -11,15 +11,15 @@ def Random_Forest_Without_CV(X_train, X_test, y_train, y_test):
         n_estimators=300, max_depth=7, random_state=42
     )
     classifier_rf.fit(X_train, y_train)
-    y_pred = classifier_rf.predict(X_test)
+    predicted_y = classifier_rf.predict(X_test)
 
-    acc_no_cv = metrics.accuracy_score(y_test, y_pred)
+    acc_no_cv = metrics.accuracy_score(y_test, predicted_y)
 
-    classification_rep = metrics.classification_report(y_test, y_pred)
+    classification_rep = metrics.classification_report(y_test, predicted_y)
 
     print(f"\nAccuracy (without CV) :\n {acc_no_cv}")
     print("\nClassification Report :\n", classification_rep)
-    return y_pred
+    return classifier_rf
 
 
 def Random_Forest_With_CV(X, y):
@@ -34,7 +34,7 @@ def Random_Forest_With_CV(X, y):
         y_train, y_test = y.iloc[train_index], y.iloc[test_index]
 
         rf_cv.fit(X_train, y_train)
-        y_pred = rf_cv.predict(X_test)
+        predicted_y = rf_cv.predict(X_test)
         acc = metrics.accuracy_score(y_test, y_pred)
         cv_scores.append(acc)
         print(
